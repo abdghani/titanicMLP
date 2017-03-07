@@ -42,17 +42,17 @@ for col in test_x.columns:
 # Neural_Network #
 #-----------------#
 class Neural_Network:
-    #defining the config varaibles
+    #defining the hyper parameters
     def __init__(self):
         self.inputLayerSize = 10
         self.hiddenLayerSize = 3
         self.outputLayerSize = 1
         self.W1 = np.random.normal(0, 0.25, (self.inputLayerSize,self.hiddenLayerSize))
         self.W2 = np.random.normal(0, 0.25, (self.hiddenLayerSize,self.outputLayerSize))
-        
+    
+    #sigmoid function    
     def sigmoid(self,x):
         return 1/(1+np.exp(-x))
-    
     def sigmoidPrime(self,x):
         return self.sigmoid(x)*(1-self.sigmoid(x))
     
@@ -70,6 +70,7 @@ class Neural_Network:
     
     def costFunction(self,x,y):
         self.yhat = self.forward(x)
+        #actual cost
         j = 0.5*np.sum((y-self.yhat)**2) / y.shape[0]
         return j
     
@@ -80,8 +81,10 @@ class Neural_Network:
 
     def costFunctionPrime(self,x,y):
         self.yhat = self.forward(x)
+        # back propagation error of layer 2
         delta3 = np.multiply(-(y-self.yhat),self.sigmoidPrime(self.z3))
         djW2 = np.dot(self.a2.T,delta3)
+        # back propagation error of layer 1
         delta2 = np.dot(delta3,self.W2.T)*self.sigmoidPrime(self.z2)
         djW1 = np.dot(x.T,delta2)
         return djW1,djW2
@@ -97,13 +100,13 @@ for i in range(iteration):
     NN.W2 = NN.W2 - rate*dJdW2
     cost = NN.costFunction(train_x,train_y)
     if(i%1000==0):
-    	print (cost)
+        print (cost)
 
 
 ans = NN.forward(test_x);
 round = np.array(np.round(ans),dtype=np.int);
 
 output = pd.DataFrame({'PassengerId':testPid,'Survived':round.ravel()})
-output.to_csv('out1.csv',index=False)
+#output.to_csv('out1.csv',index=False)
 print (round)
 
